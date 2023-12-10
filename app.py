@@ -5,6 +5,7 @@ import pandas as pd
 
 # Specify the absolute path to the 'pipe.pkl' file
 file_path = r'Crick_info/pipe.pkl'
+relative_path = 'Crick_info/pipe.pkl'
 
 # Check if the file exists
 if os.path.exists(file_path):
