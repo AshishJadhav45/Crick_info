@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 # Specify the absolute path to the 'pipe.pkl' file
-file_path = r'pipe.pkl'
+file_path = r'https://drive.google.com/file/d/1i186_NXFIk84YVktXAAm2Fgi97xAMZH0/view?usp=drive_link'
 
 
 # Check if the file exists
