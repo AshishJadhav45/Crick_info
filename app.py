@@ -3,22 +3,20 @@ import pickle
 import streamlit as st
 import pandas as pd
 
-
-
-# Assuming your app.py is in the same directory as 'pipe.pkl'
-file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pipe.pkl')
+# Specify the absolute path to the 'pipe.pkl' file
+file_path = r'C:\Users\SAM\OneDrive\Desktop\CrickInfo\pipe.pkl'
 
 # Check if the file exists
-if os.path.exists('pipe.pkl'):
+if os.path.exists(file_path):
     # Load the pickled object
     try:
-        with open('pipe.pkl', 'rb') as file:
+        with open(file_path, 'rb') as file:
             pipe = pickle.load(file)
     except Exception as e:
         st.error(f"Error loading pickled object: {e}")
         st.stop()
 else:
-    st.error(f"Error: File '{'pipe.pkl'}' not found.")
+    st.error(f"Error: File '{file_path}' not found.")
     # You might want to handle this error appropriately, for example, by exiting the script or providing a default object.
 
 teams = ['Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore', 'Kolkata Knight Riders',
