@@ -3,7 +3,7 @@ import pickle
 import streamlit as st
 import pandas as pd
 
-# Specify the absolute path to the 'pipe.pkl' file
+# Specify the absolute path to the 'pipe.pkl' files
 file_path = r'pipe.pkl'
 # file_path = os.path.join(current_dir, 'Crick_info', 'pipe.pkl')
 
