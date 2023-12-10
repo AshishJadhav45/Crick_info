@@ -2,6 +2,7 @@ import os
 import pickle
 import streamlit as st
 import pandas as pd
+import sklearn 
 
 
 # Assuming your app.py is in the same directory as 'pipe.pkl'
