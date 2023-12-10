@@ -3,18 +3,8 @@ import pickle
 import streamlit as st
 import pandas as pd
 
-# Get the directory of the current script
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Specify the relative path to 'Crick_info/pipe.pkl' from the script's directory
-relative_path = 'Crick_info/pipe.pkl'
-
-# Join the absolute path with the relative path to get the final absolute path
-file_path = os.path.join(current_dir, relative_path)
-
-# Print out the current directory and file path for debugging
-print("Current Directory:", current_dir)
-print("File Path:", file_path)
+# Specify the absolute path to 'Crick_info/pipe.pkl'
+file_path = '/mount/src/crick_info/Crick_info/pipe.pkl'
 
 # Check if the file exists
 if os.path.exists(file_path):
