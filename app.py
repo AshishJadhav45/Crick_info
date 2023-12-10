@@ -6,7 +6,7 @@ import sklearn
 
 
 # Assuming your app.py is in the same directory as 'pipe.pkl'
-file_path = os.path.join(os.path.dirname(os.path.'pipe.pkl'(__file__)), 'pipe.pkl')
+file_path = os.path.join(os.path.dirname(os.path.pipe.pkl(__file__)), 'pipe.pkl')
 
 # Check if the file exists
 if os.path.exists('pipe.pkl'):
