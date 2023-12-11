@@ -4,8 +4,11 @@ import streamlit as st
 import pandas as pd
 
 def get_pipe_path():
+    # Get the directory of the current script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
     # Construct the path to pipe.pkl in the 'Crick_info' directory
-    pipe_path = 'Crick_info/pipe.pkl'
+    pipe_path = os.path.join(script_dir, 'Crick_info', 'pipe.pkl')
 
     return pipe_path
 
@@ -25,6 +28,7 @@ else:
     st.error(f"Error: File '{file_path}' not found.")
     # You might want to handle this error appropriately, for example, by exiting the script or providing a default object.
 
+    
 teams = ['Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore', 'Kolkata Knight Riders',
          'Kings XI Punjab', 'Chennai Super Kings', 'Rajasthan Royals', 'Delhi Capitals']
 
