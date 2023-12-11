@@ -1,19 +1,11 @@
 import os
 import pickle
-import streamlit as st 
+import streamlit as st
 import pandas as pd
 
-def get_pipe_path():
-    # Get the absolute path of the current script (assuming it's app.py)
-    script_path = os.path.abspath(__file__)
+# Specify the absolute path to the 'pipe.pkl' file
+file_path = r'Crick_info/pipe.pkl'
 
-    # Construct the path to pipe.pkl in the same directory as app.py
-    pipe_path = os.path.join(os.path.dirname(script_path), 'pipe.pkl')
-
-    return pipe_path
-
-# Use the function to get the path to 'pipe.pkl'
-file_path = get_pipe_path()
 
 # Check if the file exists
 if os.path.exists(file_path):
