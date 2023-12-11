@@ -4,11 +4,11 @@ import streamlit as st
 import pandas as pd
 
 def get_pipe_path():
-    # Get the absolute path of the current script (assuming it's app.py)
-    script_path = os.path.abspath(__file__)
+    # Get the absolute path of the 'Crick_info' directory
+    crick_info_path = os.path.join(os.path.dirname(__file__), 'Crick_info')
 
     # Construct the path to pipe.pkl in the 'Crick_info' directory
-    pipe_path = os.path.join(os.path.dirname(script_path), 'Crick_info', 'pipe.pkl')
+    pipe_path = os.path.join(crick_info_path, 'pipe.pkl')
 
     return pipe_path
 
