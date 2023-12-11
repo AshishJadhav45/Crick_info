@@ -5,7 +5,7 @@ import pandas as pd
 
 def get_pipe_path():
     # Get the absolute path of the current script (assuming it's app.py)
-    script_path = os.path.abspath(__file__)
+    script_path = os.path.abspath(__file__) 
 
     # Construct the path to pipe.pkl in the same directory as app.py
     pipe_path = os.path.join(os.path.dirname(script_path), 'pipe.pkl')
