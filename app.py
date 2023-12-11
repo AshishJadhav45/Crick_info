@@ -1,6 +1,6 @@
 import os
 import pickle
-import streamlit as st
+import streamlit as st 
 import pandas as pd
 
 def get_pipe_path():
