@@ -1,24 +1,26 @@
+import os
 import pickle
 import streamlit as st
 import pandas as pd
-import requests
-from io import BytesIO
 
-# Specify the raw URL of the 'pipe.pkl' file on GitHub
+# Specify the absolute path to the 'pipe.pkl' file
 github_url = 'https://raw.githubusercontent.com/AshishJadhav45/Crick_info/main/pipe.pkl'
 
 # Download the file
-response = requests.get(github_url)
-if response.status_code == 200:
+
+
+# Check if the file exists
+if os.path.exists(file_path):
     # Load the pickled object
     try:
-        pipe = pickle.load(BytesIO(response.content))
+        with open(file_path, 'rb') as file:
+            pipe = pickle.load(file)
     except Exception as e:
         st.error(f"Error loading pickled object: {e}")
         st.stop()
 else:
-    st.error(f"Error: Unable to download file from GitHub.")
-    st.stop()
+    st.error(f"Error: File '{file_path}' not found.")
+    # You might want to handle this error appropriately, for example, by exiting the script or providing a default object.
 
 teams = ['Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore', 'Kolkata Knight Riders',
          'Kings XI Punjab', 'Chennai Super Kings', 'Rajasthan Royals', 'Delhi Capitals']
