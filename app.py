@@ -12,6 +12,10 @@ def get_pipe_path():
 # Use the function to get the path to 'pipe.pkl'
 file_path = get_pipe_path()
 
+# Print information for debugging
+st.write(f"Current working directory: {os.getcwd()}")
+st.write(f"Constructed file path: {file_path}")
+
 # Check if the file exists
 if os.path.exists(file_path):
     # Load the pickled object
@@ -23,6 +27,10 @@ if os.path.exists(file_path):
         st.stop()
 else:
     st.error(f"Error: File '{file_path}' not found.")
+    # You might want to handle this error appropriately, for example, by exiting the script or providing a default object.
+
+# ... (rest of your code remains unchanged)
+
     # You might want to handle this error appropriately, for example, by exiting the script or providing a default object.
 
 # ... (rest of your code remains unchanged)
