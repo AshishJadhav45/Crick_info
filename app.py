@@ -4,11 +4,8 @@ import streamlit as st
 import pandas as pd
 
 def get_pipe_path():
-    # Get the directory of the current script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # Construct the path to pipe.pkl in the 'Crick_info' directory
-    pipe_path = os.path.join(script_dir, 'Crick_info', 'pipe.pkl')
+    # Construct the path to pipe.pkl in the root directory
+    pipe_path = os.path.join(os.getcwd(), 'Crick_info', 'pipe.pkl')
 
     return pipe_path
 
@@ -26,6 +23,10 @@ if os.path.exists(file_path):
         st.stop()
 else:
     st.error(f"Error: File '{file_path}' not found.")
+    # You might want to handle this error appropriately, for example, by exiting the script or providing a default object.
+
+# ... (rest of your code remains unchanged)
+
     # You might want to handle this error appropriately, for example, by exiting the script or providing a default object.
 
     
