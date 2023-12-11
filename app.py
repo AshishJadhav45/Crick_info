@@ -3,44 +3,23 @@ import pickle
 import streamlit as st
 import pandas as pd
 
+# Specify the absolute path to the 'pipe.pkl' file
+file_path = r'Crick_info/pipe.pkl'
 
-def get_pipe_path():
-    """
-    Returns the absolute path to the 'pipe.pkl' file.
-    Handles potential errors.
-    """
-    script_path = os.path.abspath(__file__)
+
+# Check if the file exists
+if os.path.exists(file_path):
+    # Load the pickled object
     try:
-        # Check if the file exists in the same directory
-        if os.path.exists(os.path.join(os.path.dirname(script_path), 'pipe.pkl')):
-            return os.path.join(os.path.dirname(script_path), 'pipe.pkl')
-        # If not, try checking another location (e.g., 'Crick_info' directory)
-        elif os.path.exists('Crick_info/pipe.pkl'):
-            return 'Crick_info/pipe.pkl'
-        else:
-            raise FileNotFoundError("File 'pipe.pkl' not found")
-    except FileNotFoundError as e:
-        st.error(f"Error: {e}")
+        with open(file_path, 'rb') as file:
+            pipe = pickle.load(file)
+    except Exception as e:
+        st.error(f"Error loading pickled object: {e}")
         st.stop()
+else:
+    st.error(f"Error: File '{file_path}' not found.")
+    # You might want to handle this error appropriately, for example, by exiting the script or providing a default object.
 
-
-# Get the pipe path using the function
-try:
-    file_path = get_pipe_path()
-except Exception:
-    # Handle any unexpected errors
-    st.error("An unexpected error occurred. Please try again later.")
-    st.stop()
-
-# Load the model
-try:
-    with open(file_path, 'rb') as file:
-        pipe = pickle.load(file)
-except Exception as e:
-    st.error(f"Error loading pickled object: {e}")
-    st.stop()
-
-# Define teams and cities
 teams = ['Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore', 'Kolkata Knight Riders',
          'Kings XI Punjab', 'Chennai Super Kings', 'Rajasthan Royals', 'Delhi Capitals']
 
@@ -51,7 +30,6 @@ cities = ['Hyderabad', 'Bangalore', 'Mumbai', 'Indore', 'Kolkata', 'Delhi',
           'Visakhapatnam', 'Pune', 'Raipur', 'Ranchi', 'Abu Dhabi',
           'Sharjah', 'Mohali',]
 
-# Streamlit UI
 st.title('IPL Win Predictor')
 
 col1, col2 = st.columns(2)
