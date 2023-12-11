@@ -12,15 +12,14 @@ def get_pipe_path():
 # Use the function to get the path to 'pipe.pkl'
 file_path = get_pipe_path()
 
-# Print information for debugging
-st.write(f"Current working directory: {os.getcwd()}")
-st.write(f"Constructed file path: {file_path}")
+# Convert the file path to lowercase for case-insensitive comparison
+lowercase_file_path = file_path.lower()
 
 # Check if the file exists
-if os.path.exists(file_path):
+if os.path.exists(lowercase_file_path):
     # Load the pickled object
     try:
-        with open(file_path, 'rb') as file:
+        with open(lowercase_file_path, 'rb') as file:
             pipe = pickle.load(file)
     except Exception as e:
         st.error(f"Error loading pickled object: {e}")
