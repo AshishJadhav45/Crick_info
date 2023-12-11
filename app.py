@@ -1,4 +1,3 @@
-import os
 import pickle
 import streamlit as st
 import pandas as pd
@@ -20,10 +19,6 @@ if response.status_code == 200:
 else:
     st.error(f"Error: Unable to download file from GitHub.")
     st.stop()
-
-# ... (rest of your code remains unchanged)
-
-    # You might want to handle this error appropriately, for example, by exiting the script or providing a default object.
 
 teams = ['Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore', 'Kolkata Knight Riders',
          'Kings XI Punjab', 'Chennai Super Kings', 'Rajasthan Royals', 'Delhi Capitals']
