@@ -5,7 +5,7 @@ import pandas as pd
 
 def get_pipe_path():
     # Construct the path to pipe.pkl in the 'Crick_info' directory
-    pipe_path = os.path.join('Crick_info', 'pipe.pkl')
+    pipe_path = 'Crick_info/pipe.pkl'
 
     return pipe_path
 
