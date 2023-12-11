@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 # Specify the absolute path to the 'pipe.pkl' file
-file_path = '/mount/src/crick_info/Crick_info/pipe.pkl'
+os.path.join(os.path.dirname(__file__), '..', 'data', 'pipe.pkl'
 
 # Check if the file exists
 if os.path.exists(file_path):
