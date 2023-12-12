@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 # Specify the absolute path to the 'pipe.pkl' file
-file_path = pickle.load(open('pipe.pkl','rb'))
+file_path = pickle.load(open('https://github.com/AshishJadhav45/Crick_info/blob/main/pipe.pkl','rb'))
 
 # Download the file
 
