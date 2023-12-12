@@ -4,9 +4,17 @@ import streamlit as st
 import pandas as pd
 
 # Specify the absolute path to the 'pipe.pkl' file
-file_path = 'https://github.com/AshishJadhav45/Crick_info/raw/main/pipe.pkl?raw=true'
+import requests
 
-# Download the file
+file_path = 'https://github.com/AshishJadhav45/Crick_info/raw/main/pipe.pkl'
+response = requests.get(file_path)
+
+if response.status_code == 200:
+    with open('pipe.pkl', 'wb') as file:
+        file.write(response.content)
+else:
+    print(f"Failed to download file. Status code: {response.status_code}")
+
 
 
 # Check if the file exists
