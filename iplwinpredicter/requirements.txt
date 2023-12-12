@@ -1,4 +1,4 @@
-
+scikit-learn
 streamlit==1.18.0
 pandas==1.3.3
 # Add other dependencies as needed
@@ -6,3 +6,4 @@ pandas==1.3.3
 streamlit
 pandas
 numpy
+scikit-learn
