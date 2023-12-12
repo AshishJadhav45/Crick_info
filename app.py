@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 # Specify the absolute path to the 'pipe.pkl' file
-file_path= 'https://AshishJadhav45/Crick_info/main/pipe.pkl'
+file_path= 'https://github.com/AshishJadhav45/Crick_info/blob/main/pipe.pkl'
 
 # Download the file
 
