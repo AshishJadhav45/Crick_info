@@ -55,16 +55,13 @@ if st.button('Predict Probability'):
         ))
     ])
 
-    # Use the actual input_df for transformation
+    # Use the actual input_df for fitting and transformation
     input_df = pd.DataFrame({'batting_team': [batting_team], 'bowling_team': [bowling_team], 'city': [selected_city],
                              'runs_left': [runs_left], 'balls_left': [balls_left],
                              'wickets': [remaining_wickets], 'total_runs_x': [target], 'crr': [crr], 'rrr': [rrr]})
 
-    # Fit and transform the sample pipeline to the sample data
-    sample_data_transformed = sample_pipeline.named_steps['column_transformer'].fit_transform(pd.DataFrame(sample_data))
-
-    # Fit the actual input data to the same ColumnTransformer
-    input_df_transformed = sample_pipeline.named_steps['column_transformer'].transform(input_df)
+    # Fit and transform the input data using the trained ColumnTransformer
+    input_df_transformed = sample_pipeline.named_steps['column_transformer'].fit_transform(input_df)
 
     # Perform prediction
     result = pipe.predict_proba(input_df_transformed)
