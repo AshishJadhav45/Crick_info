@@ -55,10 +55,7 @@ if st.button('Predict Probability'):
         ))
     ])
 
-    # Fit and transform the sample pipeline to a sample DataFrame
-    sample_data_transformed = sample_pipeline.fit_transform(pd.DataFrame(sample_data))
-
-    # Use the actual input_df for prediction
+    # Use the actual input_df for transformation
     input_df = pd.DataFrame({'batting_team': [batting_team], 'bowling_team': [bowling_team], 'city': [selected_city],
                              'runs_left': [runs_left], 'balls_left': [balls_left],
                              'wickets': [remaining_wickets], 'total_runs_x': [target], 'crr': [crr], 'rrr': [rrr]})
