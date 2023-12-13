@@ -61,8 +61,16 @@ if st.button('Predict Probability'):
                              'runs_left': [runs_left], 'balls_left': [balls_left],
                              'wickets': [remaining_wickets], 'total_runs_x': [target], 'crr': [crr], 'rrr': [rrr]})
 
+    # Display columns before transformation
+    st.subheader("Columns before transformation:")
+    st.write(input_df.columns)
+
     # Fit and transform the input data using the trained ColumnTransformer
     input_df_transformed = sample_pipeline.named_steps['column_transformer'].fit_transform(input_df)
+
+    # Display columns after transformation
+    st.subheader("Columns after transformation:")
+    st.write(input_df_transformed.shape[1])
 
     # Perform prediction
     result = sample_pipeline.predict_proba(input_df_transformed)
