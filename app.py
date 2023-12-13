@@ -41,7 +41,7 @@ with col5:
 if st.button('Predict Probability'):
     runs_left = target - score
     balls_left = 120 - (overs * 6)
-    remaining_wickets = 10 - wickets_out  # Changed variable name to avoid confusion
+    remaining_wickets = 10 - wickets_out
     crr = score / overs
     rrr = (runs_left * 6) / balls_left
 
@@ -52,7 +52,8 @@ if st.button('Predict Probability'):
                 ('cat', OneHotEncoder(), ['batting_team', 'bowling_team', 'city'])
             ],
             remainder='passthrough'
-        ))
+        )),
+        ('classifier', pipe)  # Adding the classifier to the pipeline
     ])
 
     # Use the actual input_df for fitting and transformation
@@ -64,7 +65,7 @@ if st.button('Predict Probability'):
     input_df_transformed = sample_pipeline.named_steps['column_transformer'].fit_transform(input_df)
 
     # Perform prediction
-    result = pipe.predict_proba(input_df_transformed)
+    result = sample_pipeline.predict_proba(input_df_transformed)
     loss = result[0][0]
     win = result[0][1]
     st.header(batting_team + "- " + str(round(win * 100)) + "%")
