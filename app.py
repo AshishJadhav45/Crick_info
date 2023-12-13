@@ -60,7 +60,10 @@ if st.button('Predict Probability'):
                              'runs_left': [runs_left], 'balls_left': [balls_left],
                              'wickets': [remaining_wickets], 'total_runs_x': [target], 'crr': [crr], 'rrr': [rrr]})
 
-    # Transform the input data using the trained ColumnTransformer
+    # Fit and transform the sample pipeline to the sample data
+    sample_data_transformed = sample_pipeline.named_steps['column_transformer'].fit_transform(pd.DataFrame(sample_data))
+
+    # Fit the actual input data to the same ColumnTransformer
     input_df_transformed = sample_pipeline.named_steps['column_transformer'].transform(input_df)
 
     # Perform prediction
