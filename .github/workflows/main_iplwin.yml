@@ -44,7 +44,7 @@ jobs:
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: 'http://20.119.0.50/release.zip'
     
     steps:
       - name: Download artifact from build job
