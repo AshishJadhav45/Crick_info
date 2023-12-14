@@ -48,7 +48,7 @@ jobs:
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: ${{ needs.build.outputs.artifacts_path }}/release.zip
     
     steps:
       - name: Download artifact from build job
@@ -57,7 +57,7 @@ jobs:
           name: python-app
 
       - name: Unzip artifact for deployment
-        run: unzip -o python-app/release.zip -d .
+        run: unzip -o $GITHUB_WORKSPACE/python-app/release.zip -d $GITHUB_WORKSPACE
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
