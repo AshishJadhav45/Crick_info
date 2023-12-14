@@ -50,6 +50,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: python-app
+          path: $GITHUB_WORKSPACE/python-app
 
       - name: Unzip artifact for deployment
         run: unzip -o $GITHUB_WORKSPACE/python-app/release.zip -d $GITHUB_WORKSPACE/python-app/
