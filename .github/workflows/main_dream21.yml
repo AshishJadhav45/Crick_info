@@ -50,9 +50,6 @@ jobs:
           name: python-app
           path: $GITHUB_WORKSPACE
 
-      - name: Unzip artifact for deployment
-        run: unzip -o $GITHUB_WORKSPACE/python-app/release.zip -d $GITHUB_WORKSPACE/python-app/
-
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
