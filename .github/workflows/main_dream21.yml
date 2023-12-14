@@ -33,15 +33,13 @@ jobs:
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
-        run: zip -r $GITHUB_WORKSPACE/release.zip $GITHUB_WORKSPACE/*
+        run: zip -r $GITHUB_WORKSPACE/release.zip .
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
         with:
           name: python-app
-          path: |
-            $GITHUB_WORKSPACE/release.zip
-            $GITHUB_WORKSPACE/venv/
+          path: $GITHUB_WORKSPACE/release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,7 +55,7 @@ jobs:
           name: python-app
 
       - name: Unzip artifact for deployment
-        run: unzip $GITHUB_WORKSPACE/release.zip -d $GITHUB_WORKSPACE/
+        run: unzip -o $GITHUB_WORKSPACE/python-app/release.zip -d $GITHUB_WORKSPACE/python-app/
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
