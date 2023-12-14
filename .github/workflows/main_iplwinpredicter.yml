@@ -58,4 +58,4 @@ jobs:
         with:
           app-name: 'dream21'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_31BD0034E4574BA387006581408E89A8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_10EC9E161983422B8927704995ABC641 }}
