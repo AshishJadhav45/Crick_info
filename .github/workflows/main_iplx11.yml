@@ -1,8 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
-name: Build and deploy Python app to Azure Web App - Iplx11
+name: Build and deploy Python app to Azure Web App - dream21
 
 on:
   push:
@@ -16,32 +12,37 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
-          python-version: '3.10'
+          python-version: '3.10.5'
 
-      - name: Create and activate virtual environment
+      - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate || . venv/bin/activate
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
+
+      - name: Print workspace contents
+        run: echo "Workspace contents: $(ls -a)"
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip .
+        run: |
+          cd $GITHUB_WORKSPACE
+          zip -r release.zip .
+
+      - name: List files in directory
+        run: ls -R $GITHUB_WORKSPACE
 
       - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: python-app
-          path: release.zip
-          retention-days: 1
+          path: $GITHUB_WORKSPACE/release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -49,19 +50,17 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ needs.build.outputs.artifacts_path }}/release.zip
-    
+
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: python-app
-
-      - name: Unzip artifact for deployment
-        run: unzip -o $GITHUB_WORKSPACE/python-app/release.zip -d $GITHUB_WORKSPACE
+          path: $GITHUB_WORKSPACE
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
+        id: deploy-to-webapp
         with:
-          app-name: 'Iplx11'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C6883D33D45B478AA49069D182F971D9 }}
+          app-name: 'dream21'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_10EC9E161983422B8927704995ABC641 }}
