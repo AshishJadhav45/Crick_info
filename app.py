@@ -66,7 +66,8 @@ if st.button('Predict Probability'):
         # Show the input dataframe to check if columns are correctly formatted
         st.write("Input DataFrame:", input_df)
 
-        # Make the prediction using the model pipeline
+        # Ensure input_df matches training format
+        # Encode categorical columns if necessary (based on how the model was trained)
         try:
             result = pipe.predict_proba(input_df)
             loss = result[0][0]
@@ -75,6 +76,8 @@ if st.button('Predict Probability'):
             # Display the results
             st.header(batting_team + ": " + str(round(win * 100)) + "% chance of winning")
             st.header(bowling_team + ": " + str(round(loss * 100)) + "% chance of winning")
+        except AttributeError as e:
+            st.error(f"AttributeError: {e}. Ensure the pipeline includes transformers or that categorical data is encoded properly.")
         except Exception as e:
-            # Handle any errors during prediction
+            # Handle any other errors during prediction
             st.error(f"Error occurred during prediction: {e}")
