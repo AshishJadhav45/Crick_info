@@ -1,6 +1,7 @@
 import streamlit as st
 import pickle
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 
 # List of teams and cities used in the model
 teams = ['Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore', 'Kolkata Knight Riders',
@@ -13,6 +14,11 @@ cities = ['Hyderabad', 'Bangalore', 'Mumbai', 'Indore', 'Kolkata', 'Delhi', 'Cha
 
 # Load the pre-trained model pipeline
 pipe = pickle.load(open('pipe.pkl', 'rb'))
+
+# Load the encoders used during training
+batting_team_encoder = pickle.load(open('batting_team_encoder.pkl', 'rb'))
+bowling_team_encoder = pickle.load(open('bowling_team_encoder.pkl', 'rb'))
+city_encoder = pickle.load(open('city_encoder.pkl', 'rb'))
 
 # Title for the web app
 st.title('IPL Win Predictor')
@@ -52,10 +58,15 @@ if st.button('Predict Probability'):
         crr = score / overs if overs > 0 else 0  # Avoid division by zero
         rrr = (runs_left * 6) / balls_left if balls_left > 0 else 0  # Avoid division by zero
 
+        # Manually encode the categorical inputs
+        batting_team_encoded = batting_team_encoder.transform([batting_team])[0]
+        bowling_team_encoded = bowling_team_encoder.transform([bowling_team])[0]
+        city_encoded = city_encoder.transform([selected_city])[0]
+
         # Creating input DataFrame for the model
-        input_df = pd.DataFrame({'batting_team': [batting_team],
-                                 'bowling_team': [bowling_team],
-                                 'city': [selected_city],
+        input_df = pd.DataFrame({'batting_team': [batting_team_encoded],
+                                 'bowling_team': [bowling_team_encoded],
+                                 'city': [city_encoded],
                                  'runs_left': [runs_left],
                                  'balls_left': [balls_left],
                                  'wickets': [remaining_wickets],
@@ -66,8 +77,7 @@ if st.button('Predict Probability'):
         # Show the input dataframe to check if columns are correctly formatted
         st.write("Input DataFrame:", input_df)
 
-        # Ensure input_df matches training format
-        # Encode categorical columns if necessary (based on how the model was trained)
+        # Make prediction using the model
         try:
             result = pipe.predict_proba(input_df)
             loss = result[0][0]
@@ -76,8 +86,6 @@ if st.button('Predict Probability'):
             # Display the results
             st.header(batting_team + ": " + str(round(win * 100)) + "% chance of winning")
             st.header(bowling_team + ": " + str(round(loss * 100)) + "% chance of winning")
-        except AttributeError as e:
-            st.error(f"AttributeError: {e}. Ensure the pipeline includes transformers or that categorical data is encoded properly.")
         except Exception as e:
             # Handle any other errors during prediction
             st.error(f"Error occurred during prediction: {e}")
