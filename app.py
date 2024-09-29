@@ -90,6 +90,7 @@ if st.button('Predict Probability'):
 
             # Predict the probabilities
             try:
+                # Ensure the input DataFrame matches what the model expects
                 result = pipe.predict_proba(input_df)
 
                 # Extract probabilities for win/loss
@@ -99,5 +100,7 @@ if st.button('Predict Probability'):
                 # Display the result
                 st.subheader(f"Win Probability for {batting_team}: {win_prob * 100:.2f}%")
                 st.subheader(f"Win Probability for {bowling_team}: {loss_prob * 100:.2f}%")
+            except AttributeError as e:
+                st.error(f"An error occurred during prediction: {str(e)}. Please check the model input features and types.")
             except Exception as e:
-                st.error(f"An error occurred during prediction: {str(e)}")
+                st.error(f"An unexpected error occurred: {str(e)}")
