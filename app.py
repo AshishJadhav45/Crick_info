@@ -9,26 +9,30 @@ pipe = pickle.load(open('pipe.pkl', 'rb'))
 st.title('IPL Win Predictor')
 
 # Teams and cities
-teams = ['Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore',
-         'Kolkata Knight Riders', 'Kings XI Punjab', 'Chennai Super Kings',
-         'Rajasthan Royals', 'Delhi Capitals']
+teams = sorted([
+    'Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore',
+    'Kolkata Knight Riders', 'Kings XI Punjab', 'Chennai Super Kings',
+    'Rajasthan Royals', 'Delhi Capitals'
+])
 
-cities = ['Hyderabad', 'Bangalore', 'Mumbai', 'Indore', 'Kolkata', 'Delhi',
-          'Chandigarh', 'Jaipur', 'Chennai', 'Cape Town', 'Port Elizabeth',
-          'Durban', 'Centurion', 'East London', 'Johannesburg', 'Kimberley',
-          'Bloemfontein', 'Ahmedabad', 'Cuttack', 'Nagpur', 'Dharamsala',
-          'Visakhapatnam', 'Pune', 'Raipur', 'Ranchi', 'Abu Dhabi',
-          'Sharjah', 'Mohali', 'Bengaluru']
+cities = sorted([
+    'Hyderabad', 'Bangalore', 'Mumbai', 'Indore', 'Kolkata', 'Delhi',
+    'Chandigarh', 'Jaipur', 'Chennai', 'Cape Town', 'Port Elizabeth',
+    'Durban', 'Centurion', 'East London', 'Johannesburg', 'Kimberley',
+    'Bloemfontein', 'Ahmedabad', 'Cuttack', 'Nagpur', 'Dharamsala',
+    'Visakhapatnam', 'Pune', 'Raipur', 'Ranchi', 'Abu Dhabi',
+    'Sharjah', 'Mohali', 'Bengaluru'
+])
 
 # Input columns
 col1, col2 = st.columns(2)
 
 with col1:
-    batting_team = st.selectbox('Select the batting team', sorted(teams))
+    batting_team = st.selectbox('Select the batting team', teams)
 with col2:
-    bowling_team = st.selectbox('Select the bowling team', sorted(teams))
+    bowling_team = st.selectbox('Select the bowling team', teams)
 
-selected_city = st.selectbox('Select host city', sorted(cities))
+selected_city = st.selectbox('Select host city', cities)
 
 # Target input
 target = st.number_input('Target', min_value=0, step=1)
@@ -45,7 +49,12 @@ with col5:
 
 # Prediction button
 if st.button('Predict Probability'):
-    if overs == 0:
+    # Validate inputs
+    if overs < 0 or overs > 20:
+        st.error("Overs completed must be between 0 and 20.")
+    elif target < score:
+        st.error("Target must be greater than the current score.")
+    elif overs == 0:
         st.error("Overs completed cannot be zero.")
     else:
         # Calculate the necessary parameters
@@ -56,15 +65,17 @@ if st.button('Predict Probability'):
         required_run_rate = (runs_left * 6) / balls_left if balls_left > 0 else 0
 
         # Prepare input DataFrame for the model
-        input_df = pd.DataFrame({'batting_team': [batting_team],
-                                 'bowling_team': [bowling_team],
-                                 'city': [selected_city],
-                                 'runs_left': [runs_left],
-                                 'balls_left': [balls_left],
-                                 'wickets': [remaining_wickets],
-                                 'total_runs_x': [target],
-                                 'crr': [current_run_rate],
-                                 'rrr': [required_run_rate]})
+        input_df = pd.DataFrame({
+            'batting_team': [batting_team],
+            'bowling_team': [bowling_team],
+            'city': [selected_city],
+            'runs_left': [runs_left],
+            'balls_left': [balls_left],
+            'wickets': [remaining_wickets],
+            'total_runs_x': [target],
+            'crr': [current_run_rate],
+            'rrr': [required_run_rate]
+        })
 
         # Ensure categorical features are in the correct format
         input_df['batting_team'] = input_df['batting_team'].astype('category')
@@ -76,12 +87,15 @@ if st.button('Predict Probability'):
             st.error("There are missing values in the input data.")
         else:
             # Predict the probabilities
-            result = pipe.predict_proba(input_df)
+            try:
+                result = pipe.predict_proba(input_df)
 
-            # Extract probabilities for win/loss
-            loss_prob = result[0][0]
-            win_prob = result[0][1]
+                # Extract probabilities for win/loss
+                loss_prob = result[0][0]
+                win_prob = result[0][1]
 
-            # Display the result
-            st.subheader(f"Win Probability for {batting_team}: {win_prob * 100:.2f}%")
-            st.subheader(f"Win Probability for {bowling_team}: {loss_prob * 100:.2f}%")
+                # Display the result
+                st.subheader(f"Win Probability for {batting_team}: {win_prob * 100:.2f}%")
+                st.subheader(f"Win Probability for {bowling_team}: {loss_prob * 100:.2f}%")
+            except Exception as e:
+                st.error(f"An error occurred during prediction: {str(e)}")
