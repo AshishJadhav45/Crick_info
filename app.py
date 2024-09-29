@@ -52,7 +52,7 @@ if st.button('Predict Probability'):
         runs_left = target - score
         balls_left = 120 - int(overs * 6)
         remaining_wickets = 10 - wickets
-        current_run_rate = score / overs
+        current_run_rate = score / overs if overs > 0 else 0
         required_run_rate = (runs_left * 6) / balls_left if balls_left > 0 else 0
 
         # Prepare input DataFrame for the model
@@ -66,13 +66,22 @@ if st.button('Predict Probability'):
                                  'crr': [current_run_rate],
                                  'rrr': [required_run_rate]})
 
-        # Predict the probabilities
-        result = pipe.predict_proba(input_df)
+        # Ensure categorical features are in the correct format
+        input_df['batting_team'] = input_df['batting_team'].astype('category')
+        input_df['bowling_team'] = input_df['bowling_team'].astype('category')
+        input_df['city'] = input_df['city'].astype('category')
 
-        # Extract probabilities for win/loss
-        loss_prob = result[0][0]
-        win_prob = result[0][1]
+        # Check for missing values
+        if input_df.isnull().sum().sum() > 0:
+            st.error("There are missing values in the input data.")
+        else:
+            # Predict the probabilities
+            result = pipe.predict_proba(input_df)
 
-        # Display the result
-        st.subheader(f"Win Probability for {batting_team}: {win_prob * 100:.2f}%")
-        st.subheader(f"Win Probability for {bowling_team}: {loss_prob * 100:.2f}%")
+            # Extract probabilities for win/loss
+            loss_prob = result[0][0]
+            win_prob = result[0][1]
+
+            # Display the result
+            st.subheader(f"Win Probability for {batting_team}: {win_prob * 100:.2f}%")
+            st.subheader(f"Win Probability for {bowling_team}: {loss_prob * 100:.2f}%")
