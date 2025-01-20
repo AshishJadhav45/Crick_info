@@ -59,32 +59,30 @@ if overs == 0:
     st.stop()
 
 # Helper function to create input DataFrame
-def preprocess_input(batting_team, bowling_team, city, runs_left, balls_left, wickets_remaining, target, crr, rrr):
+def preprocess_input(batting_team, bowling_team, city, runs_left, balls_left, wickets, target, crr, rrr):
     return pd.DataFrame({
         'batting_team': [batting_team],
         'bowling_team': [bowling_team],
         'city': [city],
         'runs_left': [runs_left],
         'balls_left': [balls_left],
-        'wickets_remaining': [wickets_remaining],  # Ensure correct column name
+        'wickets': [wickets],  # Correct column name
         'total_runs_x': [target],
         'crr': [crr],
         'rrr': [rrr]
     })
-
 
 # Prediction logic
 if st.button('Predict Probability'):
     try:
         runs_left = target - score
         balls_left = 120 - int(overs * 6)
-        remaining_wickets = 10 - wickets
         current_run_rate = score / overs if overs > 0 else 0
         required_run_rate = (runs_left * 6) / balls_left if balls_left > 0 else float('inf')
 
         input_df = preprocess_input(
             batting_team, bowling_team, selected_city, runs_left, balls_left,
-            remaining_wickets, target, current_run_rate, required_run_rate
+            wickets, target, current_run_rate, required_run_rate
         )
 
         result = pipe.predict_proba(input_df)
