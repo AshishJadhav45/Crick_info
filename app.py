@@ -67,7 +67,7 @@ def preprocess_input(batting_team, bowling_team, city, runs_left, balls_left, wi
         'runs_left': [runs_left],
         'balls_left': [balls_left],
         'wickets': [wickets],  # Correct column name
-        'total_runs_x': [target],
+        'total_runs_x': [target],  # Match with your model's column name
         'crr': [crr],
         'rrr': [rrr]
     })
@@ -85,6 +85,7 @@ if st.button('Predict Probability'):
             wickets, target, current_run_rate, required_run_rate
         )
 
+        # Predict using the pipeline
         result = pipe.predict_proba(input_df)
         win_prob = result[0][1] * 100
         loss_prob = result[0][0] * 100
