@@ -1,9 +1,15 @@
 import streamlit as st
 import pickle
 import pandas as pd
+import numpy as np
 
-# Load the model
-pipe = pickle.load(open('pipe.pkl', 'rb'))
+# Load the model and preprocessing objects
+try:
+    with open('pipe.pkl', 'rb') as file:
+        pipe = pickle.load(file)
+except Exception as e:
+    st.error(f"Error loading model: {str(e)}")
+    st.stop()
 
 # Set title for the app
 st.title('IPL Win Predictor')
@@ -45,62 +51,69 @@ with col5:
 
 # Prediction button
 if st.button('Predict Probability'):
-    # Validate inputs
-    if overs < 0 or overs > 20:
+    # Input validation
+    if batting_team == bowling_team:
+        st.error("Batting and bowling teams cannot be the same!")
+    elif overs < 0 or overs > 20:
         st.error("Overs completed must be between 0 and 20.")
-    elif target < score:
+    elif target <= score:
         st.error("Target must be greater than the current score.")
     elif overs == 0:
         st.error("Overs completed cannot be zero.")
     else:
-        # Calculate the necessary parameters
-        runs_left = target - score
-        balls_left = 120 - int(overs * 6)
-        remaining_wickets = 10 - wickets
-        current_run_rate = score / overs if overs > 0 else 0
-        required_run_rate = (runs_left * 6) / balls_left if balls_left > 0 else 0
+        try:
+            # Calculate required parameters
+            runs_left = target - score
+            balls_left = 120 - int(overs * 6)
+            remaining_wickets = 10 - wickets
+            current_run_rate = score / overs if overs > 0 else 0
+            required_run_rate = (runs_left * 6) / balls_left if balls_left > 0 else float('inf')
 
-        # Prepare input DataFrame for the model
-        input_df = pd.DataFrame({
-            'batting_team': [batting_team],
-            'bowling_team': [bowling_team],
-            'city': [selected_city],
-            'runs_left': [runs_left],
-            'balls_left': [balls_left],
-            'wickets': [remaining_wickets],
-            'total_runs_x': [target],
-            'crr': [current_run_rate],
-            'rrr': [required_run_rate]
-        })
+            # Create input DataFrame
+            input_df = pd.DataFrame({
+                'batting_team': [batting_team],
+                'bowling_team': [bowling_team],
+                'city': [selected_city],
+                'runs_left': [runs_left],
+                'balls_left': [balls_left],
+                'wickets': [remaining_wickets],
+                'total_runs_x': [target],
+                'crr': [current_run_rate],
+                'rrr': [required_run_rate]
+            })
 
-        # Ensure categorical features are in the correct format
-        input_df['batting_team'] = input_df['batting_team'].astype('category')
-        input_df['bowling_team'] = input_df['bowling_team'].astype('category')
-        input_df['city'] = input_df['city'].astype('category')
+            # Make prediction
+            result = pipe.predict_proba(input_df)
+            
+            # Display results
+            win_prob = result[0][1] * 100
+            loss_prob = result[0][0] * 100
+            
+            # Create success message box
+            st.success(f"""
+            Prediction Results:
+            - {batting_team} Win Probability: {win_prob:.1f}%
+            - {bowling_team} Win Probability: {loss_prob:.1f}%
+            """)
 
-        # Check for missing values
-        if input_df.isnull().sum().sum() > 0:
-            st.error("There are missing values in the input data.")
-        else:
-            # Debug: Print the input DataFrame structure and types
-            st.write("Input DataFrame:")
-            st.write(input_df)
-            st.write("Data types:")
-            st.write(input_df.dtypes)
+            # Add visualization
+            import plotly.graph_objects as go
+            
+            fig = go.Figure(go.Bar(
+                x=['Batting Team', 'Bowling Team'],
+                y=[win_prob, loss_prob],
+                text=[f'{win_prob:.1f}%', f'{loss_prob:.1f}%'],
+                textposition='auto',
+            ))
+            
+            fig.update_layout(
+                title='Win Probability Distribution',
+                yaxis_title='Probability (%)',
+                yaxis_range=[0, 100]
+            )
+            
+            st.plotly_chart(fig)
 
-            # Predict the probabilities
-            try:
-                # Ensure the input DataFrame matches what the model expects
-                result = pipe.predict_proba(input_df)
-
-                # Extract probabilities for win/loss
-                loss_prob = result[0][0]
-                win_prob = result[0][1]
-
-                # Display the result
-                st.subheader(f"Win Probability for {batting_team}: {win_prob * 100:.2f}%")
-                st.subheader(f"Win Probability for {bowling_team}: {loss_prob * 100:.2f}%")
-            except AttributeError as e:
-                st.error(f"An error occurred during prediction: {str(e)}. Please check the model input features and types.")
-            except Exception as e:
-                st.error(f"An unexpected error occurred: {str(e)}")
+        except Exception as e:
+            st.error(f"An error occurred during prediction: {str(e)}")
+            st.write("Please ensure your model pipeline includes all necessary preprocessing steps.")
