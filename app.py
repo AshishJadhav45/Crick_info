@@ -3,10 +3,18 @@ import pickle
 import pandas as pd
 import numpy as np
 
-# Load the model and preprocessing objects
+# Load both the model and preprocessing objects
 try:
+    # Load the model pipeline
     with open('pipe.pkl', 'rb') as file:
         pipe = pickle.load(file)
+        
+    # Get the feature names and categories from the pipeline
+    # Assuming the first step in your pipeline is the preprocessor
+    try:
+        categorical_features = pipe.named_steps['preprocessor'].named_transformers_['cat'].get_feature_names_out()
+    except:
+        categorical_features = []  # Fallback if structure is different
 except Exception as e:
     st.error(f"Error loading model: {str(e)}")
     st.stop()
@@ -14,7 +22,7 @@ except Exception as e:
 # Set title for the app
 st.title('IPL Win Predictor')
 
-# Teams and cities
+# Teams and cities (ensure these match exactly with training data)
 teams = ['Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore',
          'Kolkata Knight Riders', 'Kings XI Punjab', 'Chennai Super Kings',
          'Rajasthan Royals', 'Delhi Capitals']
@@ -49,6 +57,24 @@ with col4:
 with col5:
     wickets = st.number_input('Wickets fallen', min_value=0, max_value=10, step=1)
 
+def preprocess_input(batting_team, bowling_team, city, runs_left, balls_left, wickets, target, crr, rrr):
+    """Manual preprocessing function to match the training pipeline"""
+    
+    # Create the input DataFrame with the exact same structure as training
+    input_df = pd.DataFrame({
+        'batting_team': [batting_team],
+        'bowling_team': [bowling_team],
+        'city': [city],
+        'runs_left': [runs_left],
+        'balls_left': [balls_left],
+        'wickets': [wickets],
+        'total_runs_x': [target],
+        'crr': [crr],
+        'rrr': [rrr]
+    })
+    
+    return input_df
+
 # Prediction button
 if st.button('Predict Probability'):
     # Input validation
@@ -69,18 +95,22 @@ if st.button('Predict Probability'):
             current_run_rate = score / overs if overs > 0 else 0
             required_run_rate = (runs_left * 6) / balls_left if balls_left > 0 else float('inf')
 
-            # Create input DataFrame
-            input_df = pd.DataFrame({
-                'batting_team': [batting_team],
-                'bowling_team': [bowling_team],
-                'city': [selected_city],
-                'runs_left': [runs_left],
-                'balls_left': [balls_left],
-                'wickets': [remaining_wickets],
-                'total_runs_x': [target],
-                'crr': [current_run_rate],
-                'rrr': [required_run_rate]
-            })
+            # Preprocess the input data
+            input_df = preprocess_input(
+                batting_team=batting_team,
+                bowling_team=bowling_team,
+                city=selected_city,
+                runs_left=runs_left,
+                balls_left=balls_left,
+                wickets=remaining_wickets,
+                target=target,
+                crr=current_run_rate,
+                rrr=required_run_rate
+            )
+
+            # For debugging
+            st.write("Input features:")
+            st.write(input_df)
 
             # Make prediction
             result = pipe.predict_proba(input_df)
@@ -96,24 +126,9 @@ if st.button('Predict Probability'):
             - {bowling_team} Win Probability: {loss_prob:.1f}%
             """)
 
-            # Add visualization
-            import plotly.graph_objects as go
-            
-            fig = go.Figure(go.Bar(
-                x=['Batting Team', 'Bowling Team'],
-                y=[win_prob, loss_prob],
-                text=[f'{win_prob:.1f}%', f'{loss_prob:.1f}%'],
-                textposition='auto',
-            ))
-            
-            fig.update_layout(
-                title='Win Probability Distribution',
-                yaxis_title='Probability (%)',
-                yaxis_range=[0, 100]
-            )
-            
-            st.plotly_chart(fig)
-
         except Exception as e:
             st.error(f"An error occurred during prediction: {str(e)}")
-            st.write("Please ensure your model pipeline includes all necessary preprocessing steps.")
+            st.write("Debugging information:")
+            st.write("Pipeline structure:", pipe.named_steps.keys())
+            st.write("Input DataFrame shape:", input_df.shape)
+            st.write("Input DataFrame columns:", input_df.columns.tolist())
