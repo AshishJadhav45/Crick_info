@@ -59,18 +59,19 @@ if overs == 0:
     st.stop()
 
 # Helper function to create input DataFrame
-def preprocess_input(batting_team, bowling_team, city, runs_left, balls_left, wickets, target, crr, rrr):
+def preprocess_input(batting_team, bowling_team, city, runs_left, balls_left, wickets_remaining, target, crr, rrr):
     return pd.DataFrame({
         'batting_team': [batting_team],
         'bowling_team': [bowling_team],
         'city': [city],
         'runs_left': [runs_left],
         'balls_left': [balls_left],
-        'wickets_remaining': [wickets],
+        'wickets_remaining': [wickets_remaining],  # Ensure correct column name
         'total_runs_x': [target],
         'crr': [crr],
         'rrr': [rrr]
     })
+
 
 # Prediction logic
 if st.button('Predict Probability'):
